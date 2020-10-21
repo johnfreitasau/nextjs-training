@@ -3,8 +3,9 @@ import {GetServerSideProps} from 'next';
 
 //import math from '../libs/maths';
 
-import {Title} from '../styles/pages/Home';
-import maths from '../libs/maths';
+import {Title} from '@/styles/pages/Home';
+import maths from '@/libs/maths';
+import SEO from '@/components/SEO';
 
 interface IProducts {
   id: string;
@@ -26,6 +27,11 @@ export default function Home({recommendedProducts}: HomeProps) {
 
   return ( 
     <div>
+      <SEO 
+      title="DevCommerce, your best e-commerce!"
+      image='boost.png'
+      shouldExcludeTitleSuffix/>
+
       <Title>Hello World 1</Title>
 
       <section>
