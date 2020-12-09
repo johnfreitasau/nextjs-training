@@ -2,6 +2,7 @@ import {useRouter} from 'next/router';
 import { client } from '@/libs/prismic';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import Prismic from 'prismic-javascript';
+import PrismicDOM from 'prismic-dom';
 import { Document } from 'prismic-javascript/types/documents';
 
 
@@ -17,11 +18,19 @@ export default function Product({ product }: ProductProps) {
     return <p>Loading...</p>
   }
 
+  // console.log('PRODUCT:',product.data);
+
   return (
     <div>
-      <h1>{router.query.slug}</h1>
+      <h1>{PrismicDOM.RichText.asText(product.data.title)}</h1>
+      
+        <div dangerouslySetInnerHTML={{ __html: PrismicDOM.RichText.asHtml(product.data.description)}} />
 
+        <img src={product.data.thumbnail.url} alt={product.data.thumbnail.alt} width="600" />
 
+        <div>Price: ${product.data.price}</div>
+
+      <p>{}</p>
     </div>
   )
 }
@@ -49,7 +58,7 @@ export const getStaticProps: GetStaticProps<ProductProps> = async (context) => {
   const {slug} = context.params;
 
   const product = await client().getByUID('product', String(slug), {})
-  
+
   return {
     props: {
       product,
