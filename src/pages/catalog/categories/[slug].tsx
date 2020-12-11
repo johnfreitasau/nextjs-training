@@ -31,6 +31,8 @@ return (
     <ul>
       {products.map(product => 
         {return (
+        <div>
+          <h3>Products under this category:</h3>
           <li key={product.id}>
           <Link href={`/catalog/products/${product.uid}`}>
             <a>
@@ -38,6 +40,7 @@ return (
             </a>
           </Link>
           </li>
+        </div>
         )})}
     </ul>
   </div>)
