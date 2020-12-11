@@ -1,44 +1,51 @@
-import { GetServerSideProps } from "next";
+import {GetServerSideProps} from 'next';
+import { useRouter } from 'next/router';
 import Link from 'next/link';
-import { useRouter } from "next/router";
-import { FormEvent, useState } from "react";
 import Prismic from 'prismic-javascript';
 import PrismicDOM from 'prismic-dom';
+import {FormEvent, useState} from 'react';
+
+import SEO from '@/components/SEO';
+import { client } from '@/libs/prismic';
 import { Document } from 'prismic-javascript/types/documents';
-import { client } from "@/libs/prismic";
+
 
 interface SearchProps {
-  searchResults: Document[];
+  SearchResults: Document[];
 }
 
-export default function Search({searchResults}: SearchProps) {
-  
+export default function Search({SearchResults}: SearchProps) {
+
   const [search, setSearch] = useState('');
   
   const route = useRouter();
 
-  console.log('SEARCH RESULTS:', searchResults);
-
   function handleSearch(e: FormEvent) {
     e.preventDefault();
 
-    route.push(`/seach?q=${encodeURIComponent(search)}`)
+    route.push(`/search?q=${encodeURIComponent(search)}`)
 
     setSearch('');
   }
-  
-  return (
+
+  return ( 
     <div>
-      <h1>Search</h1>
-      <form onSubmit={handleSearch}>
+      <SEO 
+      title="DevCommerce, your best e-commerce!"
+      image='boost.png'
+      shouldExcludeTitleSuffix/>
+
+    <h1>Products</h1>
+    <form onSubmit={handleSearch}>
         <input type="text" value={search} onChange={e => setSearch(e.target.value)}/>
         <button>Search</button>
       </form>
+      <section>
 
-      {searchResults && (
-
-        <ul>  
-          {searchResults.map(product => {
+        <ul>
+        
+          {SearchResults.map(product => 
+            {
               return (
               <li key={product.id}>
                 <Link href={`/catalog/products/${product.uid}`}>
@@ -49,46 +56,32 @@ export default function Search({searchResults}: SearchProps) {
               </li>
             )})}
         </ul>
-
-      )}
-      
+      </section>
     </div>
-
-    )
+  )
 }
 
-export const getServersideProps: GetServerSideProps<SearchProps> = async (context) => {
-  
+export const getServerSideProps: GetServerSideProps<SearchProps> = async (context) => {
+  //const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/recommended`);
 
-  console.log('chegou aqui1')
-
-  const { q } = context.params;
+  const { q } = context.query;
 
   if (!q) {
     return {
       props : {
-        searchResults : []
+        SearchResults : []
       }
     }
   }
 
-  console.log('chegou aqui2')
-
-  const searchResults = await client().query([
+  const SearchResults = await client().query([
     Prismic.Predicates.at('document.type','product'),
     Prismic.Predicates.fulltext('my.product.title', String(q))
   ])
 
-  console.log('SEARCHRESULT-SSR:',searchResults)
-
-  console.log('chegou aqui3')
-
   return {
     props: {
-      searchResults: searchResults.results
+      SearchResults: SearchResults.results
     }
   }
-  
-  console.log('chegou aqui4')
 }
-;

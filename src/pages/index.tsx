@@ -47,7 +47,6 @@ export default function Home({recommendedProducts}: HomeProps) {
 export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
   //const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/recommended`);
 
-
   const recommendedProducts = await client().query([
     Prismic.Predicates.at('document.type','product')
   ])

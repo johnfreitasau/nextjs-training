@@ -36,17 +36,6 @@ export default function Product({ product }: ProductProps) {
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  
-  const products = await client().query([
-    Prismic.Predicates.at('document.type','product')
-  ])
-  
-  const paths = products.results.map(product => {
-    return {
-      params: {slug: product.uid}
-    }
-  })
-
   return {
     paths: [],
     fallback: true,
